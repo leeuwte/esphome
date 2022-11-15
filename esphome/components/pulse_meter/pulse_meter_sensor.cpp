@@ -40,6 +40,11 @@ void PulseMeterSensor::loop() {
     this->has_detected_edge_ = false;
     this->has_valid_high_edge_ = false;
     this->has_valid_low_edge_ = false;
+
+    if (this->adaptive_timeout_enabled_) {
+      ESP_LOGD(TAG, "Adaptive timeout resets to default value");
+      this->reset_timeout();
+    }
   }
 
   // We quantize our pulse widths to 1 ms to avoid unnecessary jitter
@@ -52,6 +57,12 @@ void PulseMeterSensor::loop() {
     } else {
       // Calculate pulses/min from the pulse width in ms
       this->publish_state((60.0f * 1000.0f) / pulse_width_ms);
+
+      if (this->adaptive_timeout_enabled_) {
+        uint32_t adaptive_timout_us = (pulse_width_ms * 1.2f) * 1000;
+        ESP_LOGD(TAG, "Adaptive timeout kicking in, setting it to: %u µs", adaptive_timout_us);
+        this->set_timeout_us(adaptive_timout_us);
+      }
     }
   }
 

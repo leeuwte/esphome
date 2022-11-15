@@ -9,6 +9,7 @@ from esphome.const import (
     CONF_PIN,
     CONF_NUMBER,
     CONF_TIMEOUT,
+    CONF_ADAPTIVE_TIMEOUT,
     CONF_TOTAL,
     CONF_VALUE,
     ICON_PULSE,
@@ -19,7 +20,7 @@ from esphome.const import (
 )
 from esphome.core import CORE
 
-CODEOWNERS = ["@stevebaxter", "@cstaahl"]
+CODEOWNERS = ["@stevebaxter", "@cstaahl", "@leeuwte"]
 
 pulse_meter_ns = cg.esphome_ns.namespace("pulse_meter")
 
@@ -68,6 +69,7 @@ CONFIG_SCHEMA = sensor.sensor_schema(
         cv.Required(CONF_PIN): validate_pulse_meter_pin,
         cv.Optional(CONF_INTERNAL_FILTER, default="13us"): validate_internal_filter,
         cv.Optional(CONF_TIMEOUT, default="5min"): validate_timeout,
+        cv.Optional(CONF_ADAPTIVE_TIMEOUT, default=False): cv.boolean,
         cv.Optional(CONF_TOTAL): sensor.sensor_schema(
             unit_of_measurement=UNIT_PULSES,
             icon=ICON_PULSE,
@@ -90,6 +92,7 @@ async def to_code(config):
     cg.add(var.set_filter_us(config[CONF_INTERNAL_FILTER]))
     cg.add(var.set_timeout_us(config[CONF_TIMEOUT]))
     cg.add(var.set_filter_mode(config[CONF_INTERNAL_FILTER_MODE]))
+    cg.add(var.set_adaptive_timeout(config[CONF_ADAPTIVE_TIMEOUT]))
 
     if CONF_TOTAL in config:
         sens = await sensor.new_sensor(config[CONF_TOTAL])
