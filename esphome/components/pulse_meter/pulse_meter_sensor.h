@@ -19,11 +19,17 @@ class PulseMeterSensor : public sensor::Sensor, public Component {
   void set_filter_us(uint32_t filter) { this->filter_us_ = filter; }
   void set_filter_mode(InternalFilterMode mode) { this->filter_mode_ = mode; }
   void set_adaptive_timeout(bool enabled) { this->adaptive_timeout_enabled_ = enabled; }
+
+  //Sets the initial timeout
   void set_timeout_us(uint32_t timeout) {
     this->timeout_us_ = timeout;
     this->initial_timeout_us_ = timeout;
   }
+  //Updates the timeout to a custom value
+  void update_timeout_us(uint32_t timeout) { this->timeout_us_ = timeout; }
+  //Resets the timeout to the intitial value.
   void reset_timeout() { this->timeout_us_ = this->initial_timeout_us_; }
+
   void set_total_sensor(sensor::Sensor *sensor) { this->total_sensor_ = sensor; }
 
   void set_total_pulses(uint32_t pulses);

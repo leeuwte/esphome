@@ -61,7 +61,7 @@ void PulseMeterSensor::loop() {
       if (this->adaptive_timeout_enabled_) {
         uint32_t adaptive_timout_us = (pulse_width_ms * 1.2f) * 1000;
         ESP_LOGD(TAG, "Adaptive timeout kicking in, setting it to: %u µs", adaptive_timout_us);
-        this->set_timeout_us(adaptive_timout_us);
+        this->update_timeout_us(adaptive_timout_us);
       }
     }
   }
